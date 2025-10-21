@@ -1,8 +1,25 @@
-//
-// Created by Kevin Romanello on 21/10/25.
-//
+#pragma once
+#include <string>
+#include <vector>
 
-#ifndef PROJECT1_GLOBAL_H
-#define PROJECT1_GLOBAL_H
+class global {
+public:
+    enum class Role { Guest, User, Maintainer, Admin };
 
-#endif //PROJECT1_GLOBAL_H
+    struct User {
+        std::string username;
+        Role role = Role::Guest;
+        bool authenticated = false;
+    } user;
+
+    struct TelemetryData {
+        std::vector<float> time;
+        std::vector<float> speed;
+        std::vector<float> throttle;
+        std::vector<float> brake;
+    } data;
+
+    static global& get();
+private:
+    global() = default;
+};

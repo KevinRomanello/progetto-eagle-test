@@ -35,10 +35,10 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_items.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_demo.cpp
         core/main.cpp
-        core/controller/csv_controller.cpp
-        core/controller/csv_controller.h
-        core/controller/auth_controller.cpp
-        core/controller/auth_controller.h
+        core/controllers/csv_controller.cpp
+        core/controllers/csv_controller.h
+        core/controllers/auth_controller.cpp
+        core/controllers/auth_controller.h
         core/model/user.cpp
         core/model/user.h
         core/model/telemetry_data.cpp
