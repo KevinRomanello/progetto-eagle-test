@@ -35,6 +35,18 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_items.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_demo.cpp
         core/main.cpp
+        core/controller/csv_controller.cpp
+        core/controller/csv_controller.h
+        core/controller/auth_controller.cpp
+        core/controller/auth_controller.h
+        core/model/user.cpp
+        core/model/user.h
+        core/model/telemetry_data.cpp
+        core/model/telemetry_data.h
+        core/view/login_view.cpp
+        core/view/login_view.h
+        core/view/plot_view.cpp
+        core/view/plot_view.h
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -48,5 +60,7 @@ if(NOT APPLE)
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-add_executable(project_1 core/main.cpp)
+add_executable(project_1 core/main.cpp
+        core/global.cpp
+        core/global.h)
 target_link_libraries(project_1 ${PROJECT_NAME})
