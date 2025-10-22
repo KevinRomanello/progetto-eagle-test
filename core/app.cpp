@@ -2,6 +2,7 @@
 #include <string>
 #include <dispatch/dispatch.h>
 #include "view/login_view.h"
+#include "view/main_view.h"
 
 #include "implot/implot.h"
 
@@ -16,16 +17,19 @@ user_auth Localuser;
 void reload() {
     ImGui::Begin("Authenticate");
 
-    RenderLoginUI();
+    RenderLoginView();
 
 
     ImGui::End();
 }
 
-void app_render() {
 
-  //ImGui::ShowDemoWindow();
-  //ImPlot::ShowDemoWindow();
-  reload();
+
+void app_render() {
+    //ImGui::ShowDemoWindow();
+    //ImPlot::ShowDemoWindow();
+    //reload();
+    RenderMainView();
+    ImGui::End();
 }
 

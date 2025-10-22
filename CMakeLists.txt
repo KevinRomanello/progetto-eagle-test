@@ -49,6 +49,8 @@ add_library(
         core/view/login_view.h
         core/view/plot_view.cpp
         core/view/plot_view.h
+        core/view/main_view.cpp
+        core/view/main_view.h
 )
 
 target_link_libraries(${PROJECT_NAME}

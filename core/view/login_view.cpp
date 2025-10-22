@@ -3,7 +3,7 @@
 #include "../core/global.h"
 #include "imgui.h"
 
-void RenderLoginUI() {
+void RenderLoginView() {
     auto& state = global::get();
     static char username[64];
     static char password[64];
