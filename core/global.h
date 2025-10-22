@@ -12,14 +12,25 @@ public:
         bool authenticated = false;
     } user;
 
-    struct TelemetryData {
-        std::vector<float> time;
-        std::vector<float> speed;
-        std::vector<float> throttle;
-        std::vector<float> brake;
-    } data;
+    struct TelemetryFile {
+        std::string name;       // nome file (es. acceleration.csv)
+        std::string type;       // es. "acceleration" o "skidpad"
 
-    bool showLoginPopup = false;
+        // Colonne CSV
+        std::vector<float> time;
+        std::vector<float> accX;
+        std::vector<float> accY;
+        std::vector<float> accZ;
+
+        bool parsed = false;
+    } TelemetryFIle;
+
+    struct AppState {
+        bool showLoginPopup = false;  // flag per mostrare finestra di log in
+        std::vector<TelemetryFile> loadedFiles; //lista di file caricati
+    } AppState;
+
+
 
     static global& get();
 private:

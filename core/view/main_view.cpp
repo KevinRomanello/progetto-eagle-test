@@ -44,19 +44,18 @@ void RenderMainView() {
         // PROFILE
         if (ImGui::BeginMenu("Profile")) {
             if (!state.user.authenticated && ImGui::MenuItem("Login")) {
-                state.showLoginPopup = true;
+                state.AppState.showLoginPopup = true;
             }
             if (state.user.authenticated && ImGui::MenuItem("Logout")) {
                 state.user.authenticated = false;
-                //openFiles.clear(); // opzionale: chiudi file al logout
+                state.AppState.loadedFiles.clear(); // chiudi file al logout
             }
             ImGui::EndMenu();
         }
-
         ImGui::EndMenuBar();
     }
 
-    if (state.showLoginPopup) {
+    if (state.AppState.showLoginPopup) {
         RenderLoginView();
     }
 

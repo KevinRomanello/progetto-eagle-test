@@ -4,6 +4,10 @@ project(Project1 VERSION 1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(IMGUI_FILE_DIALOG_SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/ImGuiFileDialog/ImGuiFileDialog.cpp
+)
+
 
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread -g -rdynamic -std=c++1z -DGLEW_STATIC -DNDEBUG -w")
 
@@ -15,6 +19,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/ImGuiFileDialog
 )
 
 FILE(GLOB imgui_srcs ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/*)
@@ -27,6 +32,7 @@ add_library(
 
     # GUI
     ${imgui_srcs}
+        ${IMGUI_FILE_DIALOG_SRC}
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_glfw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl2.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/misc/cpp/imgui_stdlib.cpp
@@ -51,6 +57,8 @@ add_library(
         core/view/plot_view.h
         core/view/main_view.cpp
         core/view/main_view.h
+        core/view/upload_file_view.h
+        core/view/upload_file_view.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

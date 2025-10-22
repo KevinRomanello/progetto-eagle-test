@@ -3,17 +3,13 @@
 #include "../core/global.h"
 #include "imgui.h"
 
-void OnCloseSettings(global *state) {
-    state->showLoginPopup = false;
-}
-
 void RenderLoginView() {
     auto& state = global::get();
 
-    if (!state.showLoginPopup)
+    if (!state.AppState.showLoginPopup)
         return;
 
-    if (ImGui::Begin("Authenticate", &state.showLoginPopup, ImGuiWindowFlags_AlwaysAutoResize)) {
+    if (ImGui::Begin("Authenticate", &state.AppState.showLoginPopup, ImGuiWindowFlags_AlwaysAutoResize)) {
         static char username[64];
         static char password[64];
 
@@ -22,7 +18,7 @@ void RenderLoginView() {
 
         if (ImGui::Button("Login")) {
             if (auth_controller::login(username, password)) {
-                state.showLoginPopup = false;
+                state.AppState.showLoginPopup = false;
             }
             username[0] = '\0';
             password[0] = '\0';
