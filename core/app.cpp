@@ -1,10 +1,9 @@
 #include "app.h"
 #include <string>
 #include <dispatch/dispatch.h>
+#include "view/login_view.h"
 
 #include "implot/implot.h"
-
-
 
 struct user_auth {
     std::string pass =  "pass";
@@ -15,23 +14,10 @@ struct user_auth {
 user_auth Localuser;
 
 void reload() {
-    ImGui::Begin("Reload");
+    ImGui::Begin("Authenticate");
 
-    static char username[64] = "";
-    static char password[128] = "";
+    RenderLoginUI();
 
-    ImGui::InputText("Username", username, 64);
-    ImGui::InputText("Password", password, 128, ImGuiInputTextFlags_Password);
-
-    if (Localuser.authenticated) {
-        ImGui::Text("You are logged in.");
-    }
-
-    if (ImGui::Button("Accedi")) {
-        if (Localuser.pass == password && Localuser.user == username) {
-            Localuser.authenticated = true;
-        }
-    }
 
     ImGui::End();
 }

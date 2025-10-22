@@ -14,4 +14,8 @@ void RenderLoginUI() {
     if (ImGui::Button("Login")) {
         auth_controller::login(username, password);
     }
+
+    if (global::get().user.authenticated) {
+        ImGui::Text("autenticato");
+    }
 }

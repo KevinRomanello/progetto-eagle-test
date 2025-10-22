@@ -35,6 +35,8 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_items.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_demo.cpp
         core/main.cpp
+        core/global.cpp
+        core/global.h
         core/controllers/csv_controller.cpp
         core/controllers/csv_controller.h
         core/controllers/auth_controller.cpp
@@ -61,6 +63,5 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 add_executable(project_1 core/main.cpp
-        core/global.cpp
-        core/global.h)
+        )
 target_link_libraries(project_1 ${PROJECT_NAME})
