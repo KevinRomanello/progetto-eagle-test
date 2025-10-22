@@ -43,8 +43,8 @@ add_library(
         core/main.cpp
         core/global.cpp
         core/global.h
-        core/controllers/csv_controller.cpp
-        core/controllers/csv_controller.h
+        core/controllers/upload_file_controller.cpp
+        core/controllers/upload_file_controller.h
         core/controllers/auth_controller.cpp
         core/controllers/auth_controller.h
         core/model/user.cpp

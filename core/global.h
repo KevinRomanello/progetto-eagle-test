@@ -27,7 +27,7 @@ public:
 
     struct AppState {
         bool showLoginPopup = false;  // flag per mostrare finestra di log in
-        std::vector<TelemetryFile> loadedFiles; //lista di file caricati
+        std::vector<std::string> loadedFiles; //lista di file caricati
     } AppState;
 
 

@@ -6,6 +6,8 @@
 #include "../core/global.h"
 #include "imgui.h"
 #include "login_view.h"
+#include "upload_file_view.h"
+#include "../controllers/upload_file_controller.h"
 
 // Variabile globale temporanea per tab attivo
 int currentTabIndex = 0;
@@ -17,6 +19,8 @@ struct CsvFileTab {
 };
 
 CsvFileTab exampleTab = { "Example File" };
+
+upload_file_controller uploadController;
 
 float sidebarWidth = 300.0f;
 
@@ -31,12 +35,10 @@ void RenderMainView() {
         // FILE
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Carica File...")) {
-                // TODO: apri file dialog e aggiungi a openFiles
-                //openFiles.push_back("NuovoFile.csv");
+                uploadController.RequestOpenFile(); // Notifica il controller
             }
-            if (/*!openFiles.empty() && */ImGui::MenuItem("Chiudi File")) {
-                // Chiudi l'ultimo file aperto (esempio)
-                //openFiles.pop_back();
+            if (ImGui::MenuItem("Chiudi File")) {
+                uploadController.CloseFile(); // Notifica il controller
             }
             ImGui::EndMenu();
         }
@@ -59,6 +61,8 @@ void RenderMainView() {
         RenderLoginView();
     }
 
+    // Render file dialog tramite controller, come il popup del login
+    uploadController.RenderFileDialog();
 
     ImVec2 winSize = ImGui::GetContentRegionAvail();
 
