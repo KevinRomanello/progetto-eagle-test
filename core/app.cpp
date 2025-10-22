@@ -6,29 +6,9 @@
 
 #include "implot/implot.h"
 
-struct user_auth {
-    std::string pass =  "pass";
-    std::string user = "admin";
-    bool authenticated = false;
-};
-
-user_auth Localuser;
-
-void reload() {
-    ImGui::Begin("Authenticate");
-
-    RenderLoginView();
-
-
-    ImGui::End();
-}
-
-
-
 void app_render() {
     //ImGui::ShowDemoWindow();
     //ImPlot::ShowDemoWindow();
-    //reload();
     RenderMainView();
 }
 

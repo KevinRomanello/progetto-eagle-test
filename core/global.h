@@ -19,6 +19,8 @@ public:
         std::vector<float> brake;
     } data;
 
+    bool showLoginPopup = false;
+
     static global& get();
 private:
     global() = default;

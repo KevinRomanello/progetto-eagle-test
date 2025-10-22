@@ -1,6 +1,12 @@
 #include "main_view.h"
+
+#include <iostream>
+#include <ostream>
+
 #include "../core/global.h"
 #include "imgui.h"
+#include "login_view.h"
+
 // Variabile globale temporanea per tab attivo
 int currentTabIndex = 0;
 
@@ -18,11 +24,42 @@ void RenderMainView() {
     ImGui::Begin("Main View", nullptr,
     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
 
+    auto& state = global::get();
+
+    // Menu bar in alto
     if (ImGui::BeginMenuBar()) {
-        if (ImGui::BeginMenu("File")) { ImGui::EndMenu(); }
-        if (ImGui::BeginMenu("Settings")) { ImGui::EndMenu(); }
+        // FILE
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Carica File...")) {
+                // TODO: apri file dialog e aggiungi a openFiles
+                //openFiles.push_back("NuovoFile.csv");
+            }
+            if (/*!openFiles.empty() && */ImGui::MenuItem("Chiudi File")) {
+                // Chiudi l'ultimo file aperto (esempio)
+                //openFiles.pop_back();
+            }
+            ImGui::EndMenu();
+        }
+
+        // PROFILE
+        if (ImGui::BeginMenu("Profile")) {
+            if (!state.user.authenticated && ImGui::MenuItem("Login")) {
+                state.showLoginPopup = true;
+            }
+            if (state.user.authenticated && ImGui::MenuItem("Logout")) {
+                state.user.authenticated = false;
+                //openFiles.clear(); // opzionale: chiudi file al logout
+            }
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenuBar();
     }
+
+    if (state.showLoginPopup) {
+        RenderLoginView();
+    }
+
 
     ImVec2 winSize = ImGui::GetContentRegionAvail();
 
