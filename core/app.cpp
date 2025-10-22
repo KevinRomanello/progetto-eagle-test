@@ -30,6 +30,5 @@ void app_render() {
     //ImPlot::ShowDemoWindow();
     //reload();
     RenderMainView();
-    ImGui::End();
 }
 

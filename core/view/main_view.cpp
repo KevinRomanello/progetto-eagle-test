@@ -1,41 +1,55 @@
 #include "main_view.h"
 #include "../core/global.h"
 #include "imgui.h"
+// Variabile globale temporanea per tab attivo
+int currentTabIndex = 0;
+
+// Dummy tab per il momento
+struct CsvFileTab {
+    std::string name;
+    bool active = true;
+};
+
+CsvFileTab exampleTab = { "Example File" };
+
+float sidebarWidth = 300.0f;
 
 void RenderMainView() {
-    ImGui::Begin("Main View");
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Open DLL...")) { /* open file dialog */ }
-            if (ImGui::MenuItem("Exit")) { /* quit app */ }
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Settings")) { /* options */ ImGui::EndMenu(); }
-        ImGui::EndMainMenuBar();
+    ImGui::Begin("Main View", nullptr,
+    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("File")) { ImGui::EndMenu(); }
+        if (ImGui::BeginMenu("Settings")) { ImGui::EndMenu(); }
+        ImGui::EndMenuBar();
     }
 
-    int currentTab = 0;
+    ImVec2 winSize = ImGui::GetContentRegionAvail();
 
-    ImGui::BeginChild("Sidebar", ImVec2(200, 0), true);
-    if (ImGui::Selectable("Home", currentTab == 0)) currentTab = 0;
-    if (ImGui::Selectable("Loaded DLLs", currentTab == 1)) currentTab = 1;
-    if (ImGui::Selectable("Logs", currentTab == 2)) currentTab = 2;
+    // Sidebar
+    ImGui::BeginChild("Sidebar", ImVec2(sidebarWidth, winSize.y), true);
+    ImGui::Text("Sidebar items...");
     ImGui::EndChild();
 
     ImGui::SameLine();
-    ImGui::BeginChild("Content", ImVec2(0, 0), true);
-    switch (currentTab) {/*
-        case 0: DrawHomeTab(); break;
-        case 1: DrawDllManagerTab(); break;
-        case 2: DrawLogsTab(); break;*/
+
+    // Splitter (trascinabile)
+    ImGui::PushID("Splitter");
+    ImGui::InvisibleButton("##splitter", ImVec2(5, winSize.y));
+    if (ImGui::IsItemActive()) {
+        sidebarWidth += ImGui::GetIO().MouseDelta.x;
+        if (sidebarWidth < 100.0f) sidebarWidth = 100.0f; // min width
+        if (sidebarWidth > winSize.x - 100.0f) sidebarWidth = winSize.x - 100.0f; // max width
     }
+    ImGui::PopID();
+
+    ImGui::SameLine();
+
+    // Content area
+    ImGui::BeginChild("Content", ImVec2(0, winSize.y), true);
+    ImGui::Text("Area principale dei tab e grafici...");
     ImGui::EndChild();
 
-    if (ImGui::Button("Settings"))
-        ImGui::OpenPopup("SettingsPopup");
-    if (ImGui::BeginPopupModal("SettingsPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Configuration options here");
-        if (ImGui::Button("Close")) ImGui::CloseCurrentPopup();
-        ImGui::EndPopup();
-    }
+
+    ImGui::End(); // Main View
 }
