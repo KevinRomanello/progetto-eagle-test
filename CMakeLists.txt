@@ -6,6 +6,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(IMGUI_FILE_DIALOG_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/ImGuiFileDialog/ImGuiFileDialog.cpp
+        core/utilities/csv_parser.cpp
+        core/utilities/csv_parser.h
+        core/data/telemetry_data.h
+        core/data/user.h
+        core/data/AppState.h
 )
 
 
@@ -41,8 +46,8 @@ add_library(
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_items.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/implot/implot_demo.cpp
         core/main.cpp
-        core/global.cpp
-        core/global.h
+        core/data/global.cpp
+        core/data/global.h
         core/controllers/upload_file_controller.cpp
         core/controllers/upload_file_controller.h
         core/controllers/auth_controller.cpp

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <ostream>
 
-#include "../core/global.h"
+#include "../data/global.h"
 #include "imgui.h"
 #include "login_view.h"
 #include "upload_file_view.h"

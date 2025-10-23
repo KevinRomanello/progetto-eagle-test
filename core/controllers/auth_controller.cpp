@@ -1,7 +1,7 @@
 #include "auth_controller.h"
 #include <iostream>
 
-#include "../core/global.h"
+#include "../data/global.h"
 
 void auth_controller::RequestLogin() {
     global::get().AppState.showLoginPopup = true;

@@ -1,6 +1,6 @@
 #include "upload_file_view.h"
 #include "../controllers/upload_file_controller.h"
-#include "../core/global.h"
+#include "../data/global.h"
 #include "../thirdparty/ImGuiFileDialog/ImGuiFileDialog.h"
 
 

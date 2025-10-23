@@ -4,7 +4,7 @@
 #include <ostream>
 
 #include "../controllers/auth_controller.h"
-#include "../core/global.h"
+#include "../data/global.h"
 #include "imgui.h"
 
 void RenderLoginView() {
