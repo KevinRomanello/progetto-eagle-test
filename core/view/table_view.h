@@ -1,4 +1,4 @@
 #pragma once
 #include "../core/data/telemetry_data.h"
 
-void RenderPlotView(TelemetryData& currentFile);
+void RenderTableView(TelemetryData& currentFile);

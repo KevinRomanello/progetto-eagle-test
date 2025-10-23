@@ -15,6 +15,10 @@ set(IMGUI_FILE_DIALOG_SRC
         core/controllers/file_list_controller.cpp
         core/view/file_list_view.cpp
         core/view/file_list_view.h
+        core/view/table_view.h
+        core/view/table_view.cpp
+        core/view/content_view.h
+        core/view/content_view.cpp
 )
 
 

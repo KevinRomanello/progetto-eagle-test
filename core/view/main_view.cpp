@@ -10,17 +10,10 @@
 #include "../controllers/upload_file_controller.h"
 #include "../controllers/auth_controller.h"
 #include "file_list_view.h"
+#include "content_view.h"
 
 // Variabile globale temporanea per tab attivo
 int currentTabIndex = 0;
-
-// Dummy tab per il momento
-struct CsvFileTab {
-    std::string name;
-    bool active = true;
-};
-
-CsvFileTab exampleTab = { "Example File" };
 
 upload_file_controller uploadController;
 auth_controller authController;
@@ -54,7 +47,7 @@ void RenderMainView() {
 
     auto& state = global::get();
 
-    // Menu bar in alto
+    // --- 2. Menu Bar ---
     if (ImGui::BeginMenuBar()) {
         // FILE
         if (ImGui::BeginMenu("File")) {
@@ -80,40 +73,40 @@ void RenderMainView() {
         ImGui::EndMenuBar();
     }
 
-    RenderLoginView();      // non i controlli vengono delegati alla funzione chiamata
+    // --- 3. Rendering Popup (gestiscono da soli la visibilità) ---
+    RenderLoginView();
     RenderUploadFileView();
 
+    // --- 4. DEFINIZIONE AREA DI LAVORO ---
     ImVec2 winSize = ImGui::GetContentRegionAvail();
 
-    // Sidebar
+    // --- 5. Sidebar (Contenitore) ---
     ImGui::BeginChild("Sidebar", ImVec2(sidebarWidth, winSize.y), true);
-
-    RenderFileListView();  // chiamo la view per disegnarla
-
+    RenderFileListView();
     ImGui::EndChild();
 
-    // Splitter (trascinabile)
+    ImGui::SameLine();
+
+    // --- 6. Splitter (La "barra per modificare") ---
     ImGui::PushID("Splitter");
     ImGui::InvisibleButton("##splitter", ImVec2(5, winSize.y));
-
-    // Quando il mouse è sopra lo splitter, cambia il cursore
     if (ImGui::IsItemHovered())
-        ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW); // doppia freccia orizzontale
-
+        ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
     if (ImGui::IsItemActive()) {
         sidebarWidth += ImGui::GetIO().MouseDelta.x;
-        if (sidebarWidth < 100.0f) sidebarWidth = 100.0f; // min width
-        if (sidebarWidth > winSize.x - 100.0f) sidebarWidth = winSize.x - 100.0f; // max width
+        if (sidebarWidth < 100.0f) sidebarWidth = 100.0f;
+        if (sidebarWidth > winSize.x - 100.0f) sidebarWidth = winSize.x - 100.0f;
     }
     ImGui::PopID();
 
     ImGui::SameLine();
 
-    // Content area
+    // --- 7. Content Area (Contenitore) ---
     ImGui::BeginChild("Content", ImVec2(0, winSize.y), true);
-    ImGui::Text("Area principale dei tab e grafici...");
+
+    RenderContentView();    // Delega il render alla view
+
     ImGui::EndChild();
 
-
-    ImGui::End(); // Main View
+    ImGui::End();
 }
