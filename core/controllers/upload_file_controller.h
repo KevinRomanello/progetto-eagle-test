@@ -1,10 +1,10 @@
 #pragma once
-#include "../ImGuiFileDialog/ImGuiFileDialog.h"
+
 #include <string>
 
 class upload_file_controller {
 public:
-    void RequestOpenFile();
-    void CloseFile();
-    void RenderFileDialog();  // deve esistere anche nel cpp
+    static void RequestOpenFile();
+    static void CloseFile();
+    static void LoadFile(const std::string& filePath);
 };

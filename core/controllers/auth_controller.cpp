@@ -1,4 +1,6 @@
 #include "auth_controller.h"
+#include <iostream>
+
 #include "../core/global.h"
 
 void auth_controller::RequestLogin() {
@@ -20,6 +22,7 @@ bool auth_controller::login(const std::string& username, const std::string& pass
 void auth_controller::RequestLogout() {
     auto& state = global::get();
     state.user.authenticated = false;
+    std::cout << "logout effettuato" << std::endl;
     state.AppState.loadedFiles.clear();
 }
 

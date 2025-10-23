@@ -37,10 +37,10 @@ void RenderMainView() {
         // FILE
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Carica File...")) {
-                uploadController.RequestOpenFile(); // Notifica il controller
+                upload_file_controller::RequestOpenFile();
             }
             if (ImGui::MenuItem("Chiudi File")) {
-                uploadController.CloseFile(); // Notifica il controller
+                upload_file_controller::CloseFile();
             }
             ImGui::EndMenu();
         }
@@ -51,19 +51,15 @@ void RenderMainView() {
                 auth_controller::RequestLogin();
             }
             if (state.user.authenticated && ImGui::MenuItem("Logout")) {
-
+                auth_controller::RequestLogout();
             }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
 
-    if (state.AppState.showLoginPopup) {
-        RenderLoginView();
-    }
-
-    // Render file dialog tramite controller, come il popup del login
-    uploadController.RenderFileDialog();
+    RenderLoginView();      // non i controlli vengono delegati alla funzione chiamata
+    RenderUploadFileView();
 
     ImVec2 winSize = ImGui::GetContentRegionAvail();
 
