@@ -11,6 +11,10 @@ set(IMGUI_FILE_DIALOG_SRC
         core/data/telemetry_data.h
         core/data/user.h
         core/data/AppState.h
+        core/controllers/file_list_controller.h
+        core/controllers/file_list_controller.cpp
+        core/view/file_list_view.cpp
+        core/view/file_list_view.h
 )
 
 

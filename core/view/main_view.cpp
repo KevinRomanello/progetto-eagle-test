@@ -9,6 +9,7 @@
 #include "upload_file_view.h"
 #include "../controllers/upload_file_controller.h"
 #include "../controllers/auth_controller.h"
+#include "file_list_view.h"
 
 // Variabile globale temporanea per tab attivo
 int currentTabIndex = 0;
@@ -86,10 +87,10 @@ void RenderMainView() {
 
     // Sidebar
     ImGui::BeginChild("Sidebar", ImVec2(sidebarWidth, winSize.y), true);
-    ImGui::Text("Sidebar items...");
-    ImGui::EndChild();
 
-    ImGui::SameLine();
+    RenderFileListView();  // chiamo la view per disegnarla
+
+    ImGui::EndChild();
 
     // Splitter (trascinabile)
     ImGui::PushID("Splitter");
