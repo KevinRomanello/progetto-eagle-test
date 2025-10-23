@@ -1,4 +1,8 @@
 #include "login_view.h"
+
+#include <iostream>
+#include <ostream>
+
 #include "../controllers/auth_controller.h"
 #include "../core/global.h"
 #include "imgui.h"
@@ -18,7 +22,7 @@ void RenderLoginView() {
 
         if (ImGui::Button("Login")) {
             if (auth_controller::login(username, password)) {
-                state.AppState.showLoginPopup = false;
+                std::cout << "accesso effettuato" << std::endl;
             }
             username[0] = '\0';
             password[0] = '\0';

@@ -8,6 +8,7 @@
 #include "login_view.h"
 #include "upload_file_view.h"
 #include "../controllers/upload_file_controller.h"
+#include "../controllers/auth_controller.h"
 
 // Variabile globale temporanea per tab attivo
 int currentTabIndex = 0;
@@ -21,6 +22,7 @@ struct CsvFileTab {
 CsvFileTab exampleTab = { "Example File" };
 
 upload_file_controller uploadController;
+auth_controller authController;
 
 float sidebarWidth = 300.0f;
 
@@ -46,11 +48,10 @@ void RenderMainView() {
         // PROFILE
         if (ImGui::BeginMenu("Profile")) {
             if (!state.user.authenticated && ImGui::MenuItem("Login")) {
-                state.AppState.showLoginPopup = true;
+                auth_controller::RequestLogin();
             }
             if (state.user.authenticated && ImGui::MenuItem("Logout")) {
-                state.user.authenticated = false;
-                state.AppState.loadedFiles.clear(); // chiudi file al logout
+
             }
             ImGui::EndMenu();
         }
@@ -76,6 +77,11 @@ void RenderMainView() {
     // Splitter (trascinabile)
     ImGui::PushID("Splitter");
     ImGui::InvisibleButton("##splitter", ImVec2(5, winSize.y));
+
+    // Quando il mouse è sopra lo splitter, cambia il cursore
+    if (ImGui::IsItemHovered())
+        ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW); // doppia freccia orizzontale
+
     if (ImGui::IsItemActive()) {
         sidebarWidth += ImGui::GetIO().MouseDelta.x;
         if (sidebarWidth < 100.0f) sidebarWidth = 100.0f; // min width

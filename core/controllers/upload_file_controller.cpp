@@ -6,6 +6,10 @@
 static bool showFileDialog = false;
 
 void upload_file_controller::RequestOpenFile() {
+    auto& state = global::get();
+    if (!state.user.authenticated)
+        return;
+
     showFileDialog = true; // flag interno come per showLoginPopup
 }
 

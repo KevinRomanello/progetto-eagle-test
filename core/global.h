@@ -26,10 +26,10 @@ public:
     } TelemetryFIle;
 
     struct AppState {
-        bool showLoginPopup = false;  // flag per mostrare finestra di log in
-        std::vector<std::string> loadedFiles; //lista di file caricati
+        bool showLoginPopup = false;    // flag per la finestra di login
+        bool showUploadDialog = false; // flag per la finestra di load file
+        std::vector<std::string> loadedFiles;
     } AppState;
-
 
 
     static global& get();
