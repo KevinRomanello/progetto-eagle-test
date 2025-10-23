@@ -27,8 +27,29 @@ auth_controller authController;
 float sidebarWidth = 300.0f;
 
 void RenderMainView() {
-    ImGui::Begin("Main View", nullptr,
-    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+    // 1. Ottieni il "viewport" principale (l'intera finestra dell'OS)
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+    // 2. Imposta la posizione e la dimensione della *prossima* finestra
+    //    per riempire l'area di lavoro del viewport.
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+
+    // 3. Imposta i flag per renderla una "root window" non interattiva
+    ImGuiWindowFlags window_flags = 0;
+    window_flags |= ImGuiWindowFlags_MenuBar;           // Vogliamo il menu bar
+    window_flags |= ImGuiWindowFlags_NoResize;          // Niente ridimensionamento
+    window_flags |= ImGuiWindowFlags_NoMove;            // Niente spostamento
+    window_flags |= ImGuiWindowFlags_NoCollapse;        // Niente collasso
+    window_flags |= ImGuiWindowFlags_NoSavedSettings;   // NON salvare la posizione in imgui.ini
+    window_flags |= ImGuiWindowFlags_NoTitleBar;        // Rimuove la barra del titolo (opzionale)
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus; // Non venire avanti se cliccata
+
+    // 4. Inizia la finestra. Nota "Main View##Root".
+    //    Il "##Root" è un ID nascosto. Passiamo 'nullptr' per 'p_open'.
+    ImGui::Begin("Main View##Root", nullptr, window_flags);
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     auto& state = global::get();
 

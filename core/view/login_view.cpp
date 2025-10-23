@@ -10,10 +10,15 @@
 void RenderLoginView() {
     auto& state = global::get();
 
-    if (!state.AppState.showLoginPopup)
-        return;
+    if (state.AppState.showLoginPopup) {
+        ImGui::OpenPopup("Authenticate");
+    }
 
-    if (ImGui::Begin("Authenticate", &state.AppState.showLoginPopup, ImGuiWindowFlags_AlwaysAutoResize)) {
+    // per centrarla
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("Authenticate", &state.AppState.showLoginPopup, ImGuiWindowFlags_AlwaysAutoResize)) {
         static char username[64];
         static char password[64];
 
@@ -28,8 +33,11 @@ void RenderLoginView() {
             password[0] = '\0';
         }
 
+        if (!state.AppState.showLoginPopup) {
+            ImGui::CloseCurrentPopup();
+        }
 
-        ImGui::End();
+        ImGui::EndPopup();
     }
 
 }
