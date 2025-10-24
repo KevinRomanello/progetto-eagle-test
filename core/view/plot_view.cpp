@@ -64,8 +64,7 @@ void RenderPlotView(TelemetryData &currentFile) {
         }
 
         // --- SPLITTER ORIZZONTALE ---
-        // Usiamo l'indice 'i' per il PushID. È semplice e garantisce unicità.
-        // Invece di PushID(colName.c_str())
+        // Usiamo l'indice 'i' per il PushID.
         ImGui::PushID(i);
 
         ImGui::InvisibleButton("##splitter", ImVec2(-1, 5.0f));

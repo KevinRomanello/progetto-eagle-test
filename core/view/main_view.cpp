@@ -60,6 +60,17 @@ void RenderMainView() {
             ImGui::EndMenu();
         }
 
+        // menu visibile solo all'admin
+        if (state.user.role == UserRole::ADMIN) {
+            if (ImGui::BeginMenu("Users")) {
+                if (ImGui::MenuItem("Gestione Utenti...")) {
+                    // Logica futura:
+                    // state.AppState.showUserManagementPopup = true;
+                }
+                ImGui::EndMenu();
+            }
+        }
+
         // PROFILE
         if (ImGui::BeginMenu("Profile")) {
             if (!state.user.authenticated && ImGui::MenuItem("Login")) {
@@ -69,17 +80,6 @@ void RenderMainView() {
                 auth_controller::RequestLogout();
             }
             ImGui::EndMenu();
-        }
-
-        // menu visibile solo all'admin
-        if (state.user.role == UserRole::ADMIN) {
-            if (ImGui::BeginMenu("Admin")) {
-                if (ImGui::MenuItem("Gestione Utenti...")) {
-                    // Logica futura:
-                    // state.AppState.showUserManagementPopup = true;
-                }
-                ImGui::EndMenu();
-            }
         }
         ImGui::EndMenuBar();
     }

@@ -3,12 +3,18 @@
 #include "telemetry_data.h"
 #include "user.h"
 #include "AppState.h"
-#include <vector>
+#include <string>
 
 class global {
 public:
     AppState AppState;
     UserState user;
+
+    // file db temporaneo (scelta brutta senza db)
+    static const std::string USER_DB_FILE;
+
+    // L'elenco di tutti gli utenti registrati (caricato da file)
+    std::vector<UserData> userDatabase;
 
     static global& get();
 

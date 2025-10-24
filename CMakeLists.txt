@@ -19,6 +19,8 @@ set(IMGUI_FILE_DIALOG_SRC
         core/view/table_view.cpp
         core/view/content_view.h
         core/view/content_view.cpp
+        core/controllers/user_management_controller.h
+        core/controllers/user_management_controller.h.cpp
 )
 
 
