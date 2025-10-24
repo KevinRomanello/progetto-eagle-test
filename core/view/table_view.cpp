@@ -32,7 +32,10 @@ void RenderTableView(TelemetryData& currentFile) {
                 ImGui::TableSetColumnIndex(col_idx);
 
                 const std::string& colName = currentFile.columnNames[col_idx];
-                double value = currentFile.columns.at(colName)[row];
+
+                // --- CORREZIONE ---
+                // Dobbiamo accedere a .values
+                double value = currentFile.columns.at(colName).values[row];
 
                 ImGui::Text("%.4f", value);
             }

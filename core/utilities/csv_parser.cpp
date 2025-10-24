@@ -98,7 +98,7 @@ TelemetryData CSVParser::Parse(const std::string& filePath) {
     for (const auto& colName : telemetryData.columnNames) {
         // Per ogni nome, crea una "chiave" nella mappa
         // e le assegna un vettore di double *vuoto*, pronto per essere riempito.
-        telemetryData.columns[colName] = std::vector<double>();
+        telemetryData.columns[colName] = DataColumn();
     }
 
     // 5. PARSING DATI (IL LOOP PRINCIPALE)
@@ -132,7 +132,15 @@ TelemetryData CSVParser::Parse(const std::string& filePath) {
 
                 // 3. Usa il nome della colonna per trovare il vettore giusto nella mappa
                 //    e aggiungi il valore.
-                telemetryData.columns[colName].push_back(value);
+                // 1. Ottieni un riferimento alla struct DataColumn
+                DataColumn& column = telemetryData.columns[colName];
+
+                // 2. Aggiungi il valore
+                column.values.push_back(value);
+
+                // 3. Aggiorna min e max al volo
+                if (value < column.min) column.min = value;
+                if (value > column.max) column.max = value;
 
             } catch (const std::exception& e) {
                 // Il dato non era un numero. Lo segnaliamo e andiamo avanti.
