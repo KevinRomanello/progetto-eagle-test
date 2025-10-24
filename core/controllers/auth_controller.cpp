@@ -42,6 +42,26 @@ void auth_controller::LoadUserDatabase() {
         }
     }
     file.close();
+
+    // --- CONTROLLO DI SICUREZZA (La tua richiesta) ---
+    bool adminFound = false;
+    for (const auto& user : db) {
+        if (user.role == UserRole::ADMIN) {
+            adminFound = true;
+            break;
+        }
+    }
+
+    // Se, dopo aver letto il file, non c'è nessun admin...
+    if (!adminFound) {
+        std::cout << "ATTENZIONE: Nessun admin trovato. Aggiunta admin di default." << std::endl;
+
+        // Aggiungi l'admin di default al database in memoria
+        db.push_back(UserData{"admin", "1234", UserRole::ADMIN});
+
+        // Salva di nuovo il file, ora corretto
+        user_management_controller::SaveUserDatabase();
+    }
 }
 
 

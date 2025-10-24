@@ -20,7 +20,12 @@ set(IMGUI_FILE_DIALOG_SRC
         core/view/content_view.h
         core/view/content_view.cpp
         core/controllers/user_management_controller.h
-        core/controllers/user_management_controller.h.cpp
+        core/controllers/user_management_controller.cpp
+        core/view/add_user_view.h
+        "core/view/add_user_view.cpp"
+        core/view/add_user_view.cpp
+        core/view/user_management_view.h
+        core/view/user_management_view.cpp
 )
 
 

@@ -9,7 +9,9 @@
 #include "upload_file_view.h"
 #include "../controllers/upload_file_controller.h"
 #include "../controllers/auth_controller.h"
+#include "../controllers/user_management_controller.h"
 #include "file_list_view.h"
+#include "user_management_view.h"
 #include "content_view.h"
 
 // Variabile globale temporanea per tab attivo
@@ -64,8 +66,7 @@ void RenderMainView() {
         if (state.user.role == UserRole::ADMIN) {
             if (ImGui::BeginMenu("Users")) {
                 if (ImGui::MenuItem("Gestione Utenti...")) {
-                    // Logica futura:
-                    // state.AppState.showUserManagementPopup = true;
+                    user_management_controller::RequestShowPopup();
                 }
                 ImGui::EndMenu();
             }
@@ -87,6 +88,7 @@ void RenderMainView() {
     // --- 3. Rendering Popup (gestiscono da soli la visibilità) ---
     RenderLoginView();
     RenderUploadFileView();
+    RenderUserManagementView();
 
     // --- 4. DEFINIZIONE AREA DI LAVORO ---
     ImVec2 winSize = ImGui::GetContentRegionAvail();

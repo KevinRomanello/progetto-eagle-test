@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "../core/controllers/auth_controller.h" // per il caricamento degli utenti
 
 #include "app.h"
 
@@ -25,6 +26,8 @@ void sig_handler(int sig_number) {
 
 int main() {
   std::cout << "--- Project 1 ---\n" << std::endl;
+
+  auth_controller::LoadUserDatabase(); // per caricare gli utenti
 
   signal(SIGINT, sig_handler);
   signal(SIGTERM, sig_handler);
