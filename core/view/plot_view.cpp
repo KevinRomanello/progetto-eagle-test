@@ -1,40 +1,41 @@
 #include "plot_view.h"
 #include "imgui.h"
 #include "implot/implot.h"
+#include "../core/data/global.h"
 
 static const std::vector<ImVec4> plotColors = {
-    ImVec4(0.0f, 0.7f, 1.0f, 1.0f),  // Blu
-    ImVec4(1.0f, 0.3f, 0.3f, 1.0f),  // Rosso
-    ImVec4(0.1f, 1.0f, 0.1f, 1.0f),  // Verde
-    ImVec4(1.0f, 0.7f, 0.0f, 1.0f),  // Arancione
-    ImVec4(0.7f, 0.3f, 1.0f, 1.0f),  // Viola
-    ImVec4(1.0f, 1.0f, 0.0f, 1.0f)   // Giallo
+    ImVec4(0.0f, 0.7f, 1.0f, 1.0f), // Blu
+    ImVec4(1.0f, 0.3f, 0.3f, 1.0f), // Rosso
+    ImVec4(0.1f, 1.0f, 0.1f, 1.0f), // Verde
+    ImVec4(1.0f, 0.7f, 0.0f, 1.0f), // Arancione
+    ImVec4(0.7f, 0.3f, 1.0f, 1.0f), // Viola
+    ImVec4(1.0f, 1.0f, 0.0f, 1.0f) // Giallo
 };
 
 // vettore per poter ridimensionare i bvari plot
 static std::map<std::string, float> plotHeights;
 static const float defaultPlotHeight = 250.0f; // Altezza di partenza
-static const float minPlotHeight = 100.0f;     // Altezza minima
+static const float minPlotHeight = 100.0f; // Altezza minima
 
 // Mappa statica per memorizzare la visibilità delle serie nel Master Plot
 static std::map<std::string, bool> seriesVisibility;
 
-void RenderPlotView(TelemetryData& currentFile) {
+void RenderPlotView(TelemetryData &currentFile) {
     ImGui::Text("File: %s", currentFile.fileName.c_str());
     ImGui::Separator();
 
-    std::vector<double>& x_data = currentFile.GetTimestamps();
+    std::vector<double> &x_data = currentFile.GetTimestamps();
     if (x_data.empty()) {
         ImGui::Text("Nessun dato da plottare.");
         return;
     }
 
-    const char* x_label = currentFile.columnNames[0].c_str();
+    const char *x_label = currentFile.columnNames[0].c_str();
 
     // --- LOOP 1: PLOT INDIVIDUALI ---
     for (int i = 1; i < currentFile.columnNames.size(); ++i) {
-        const std::string& colName = currentFile.columnNames[i];
-        std::vector<double>& y_data = currentFile.GetColumnData(colName);
+        const std::string &colName = currentFile.columnNames[i];
+        std::vector<double> &y_data = currentFile.GetColumnData(colName);
 
         if (y_data.size() != x_data.size()) continue;
 
@@ -45,7 +46,7 @@ void RenderPlotView(TelemetryData& currentFile) {
         }
 
         // Recupera un *riferimento* all'altezza di questo grafico
-        float& currentHeight = plotHeights[colName];
+        float &currentHeight = plotHeights[colName];
 
         if (ImPlot::BeginPlot(colName.c_str(), ImVec2(-1, currentHeight))) {
             ImPlot::SetupAxes(x_label, colName.c_str());
@@ -57,7 +58,7 @@ void RenderPlotView(TelemetryData& currentFile) {
 
             ImPlot::PlotLine(colName.c_str(), x_data.data(), y_data.data(), x_data.size());
 
-            ImPlot::PopStyleColor();  // rimuove il colore per non sporcare i grafici successivi
+            ImPlot::PopStyleColor(); // rimuove il colore per non sporcare i grafici successivi
 
             ImPlot::EndPlot();
         }
@@ -86,69 +87,70 @@ void RenderPlotView(TelemetryData& currentFile) {
         ImGui::PopID(); // Rilasciamo l'ID
     }
 
-    // --- LOOP 2: MASTER PLOT ---
-    // 1. Disegna le Checkbox per i toggle
-    for (int i = 1; i < currentFile.columnNames.size(); ++i) {
-        const std::string& colName = currentFile.columnNames[i];
-
-        // Inizializza la visibilità a 'true' se non esiste
-        if (seriesVisibility.find(colName) == seriesVisibility.end()) {
-            seriesVisibility[colName] = true;
-        }
-
-        if (i > 1) ImGui::SameLine(); // Mostra le checkbox sulla stessa riga
-
-        // Creiamo un ID unico aggiungendo "##toggle"
-        // ImGui mostrerà solo 'colName'
-        std::string checkbox_id = colName + "##toggle";
-        ImGui::Checkbox(checkbox_id.c_str(), &seriesVisibility[colName]);
-    }
+    auto &user = global::get().user;
 
     // 2. Disegna il Master Plot
-    if (ImPlot::BeginPlot("Master Plot", ImVec2(-1, 350))) {
-
-        // Imposta l'asse Y per essere bloccato tra 0 e 1 (range normalizzato)
-        ImPlot::SetupAxes(x_label, "Normalized Value", ImPlotAxisFlags_None, ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
-        ImPlot::SetupAxisLimits(ImAxis_Y1, -0.1, 1.1, ImGuiCond_Always); // (con padding)
-
-        // Vettore temporaneo per i dati normalizzati
-        std::vector<double> normalized_data;
-
+    if (user.role == UserRole::ADVANCED || user.role == UserRole::ADMIN) {
+        // --- LOOP 2: MASTER PLOT ---
+        // 1. Disegna le Checkbox per i toggle
         for (int i = 1; i < currentFile.columnNames.size(); ++i) {
-            const std::string& colName = currentFile.columnNames[i];
+            const std::string &colName = currentFile.columnNames[i];
 
-            // 3. Disegna la linea solo se è visibile
-            if (seriesVisibility[colName]) {
-
-                DataColumn& column = currentFile.GetColumn(colName);
-                double min = column.min;
-                double max = column.max;
-                double range = max - min;
-
-                // Evita divisione per zero se tutti i valori sono uguali
-                if (range == 0) range = 1.0;
-
-                // 4. Calcola i dati normalizzati al volo
-                normalized_data.clear();
-                normalized_data.reserve(column.values.size());
-
-                for (double val : column.values) {
-                    // Formula di normalizzazione Min-Max
-                    normalized_data.push_back( (val - min) / range );
-                }
-
-                // 5. Applica colore e plotta
-                int colorIndex = (i - 1) % plotColors.size();
-                ImPlot::PushStyleColor(ImPlotCol_Line, plotColors[colorIndex]);
-
-                ImPlot::PlotLine(colName.c_str(), x_data.data(), normalized_data.data(), x_data.size());
-
-                ImPlot::PopStyleColor();
-
+            // Inizializza la visibilità a 'true' se non esiste
+            if (seriesVisibility.find(colName) == seriesVisibility.end()) {
+                seriesVisibility[colName] = true;
             }
 
+            if (i > 1) ImGui::SameLine(); // Mostra le checkbox sulla stessa riga
+
+            // Creiamo un ID unico aggiungendo "##toggle"
+            // ImGui mostrerà solo 'colName'
+            std::string checkbox_id = colName + "##toggle";
+            ImGui::Checkbox(checkbox_id.c_str(), &seriesVisibility[colName]);
         }
 
-        ImPlot::EndPlot();
+
+        if (ImPlot::BeginPlot("Master Plot", ImVec2(-1, 350))) {
+            // Imposta l'asse Y per essere bloccato tra 0 e 1 (range normalizzato)
+            ImPlot::SetupAxes(x_label, "Normalized Value", ImPlotAxisFlags_None,
+                              ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
+            ImPlot::SetupAxisLimits(ImAxis_Y1, -0.1, 1.1, ImGuiCond_Always); // (con padding)
+
+            // Vettore temporaneo per i dati normalizzati
+            std::vector<double> normalized_data;
+
+            for (int i = 1; i < currentFile.columnNames.size(); ++i) {
+                const std::string &colName = currentFile.columnNames[i];
+
+                // 3. Disegna la linea solo se è visibile
+                if (seriesVisibility[colName]) {
+                    DataColumn &column = currentFile.GetColumn(colName);
+                    double min = column.min;
+                    double max = column.max;
+                    double range = max - min;
+
+                    // Evita divisione per zero se tutti i valori sono uguali
+                    if (range == 0) range = 1.0;
+
+                    // 4. Calcola i dati normalizzati al volo
+                    normalized_data.clear();
+                    normalized_data.reserve(column.values.size());
+
+                    for (double val: column.values) {
+                        // Formula di normalizzazione Min-Max
+                        normalized_data.push_back((val - min) / range);
+                    }
+
+                    // 5. Applica colore e plotta
+                    int colorIndex = (i - 1) % plotColors.size();
+                    ImPlot::PushStyleColor(ImPlotCol_Line, plotColors[colorIndex]);
+
+                    ImPlot::PlotLine(colName.c_str(), x_data.data(), normalized_data.data(), x_data.size());
+
+                    ImPlot::PopStyleColor();
+                }
+            }
+            ImPlot::EndPlot();
+        }
     }
 }

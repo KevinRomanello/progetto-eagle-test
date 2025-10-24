@@ -70,6 +70,17 @@ void RenderMainView() {
             }
             ImGui::EndMenu();
         }
+
+        // menu visibile solo all'admin
+        if (state.user.role == UserRole::ADMIN) {
+            if (ImGui::BeginMenu("Admin")) {
+                if (ImGui::MenuItem("Gestione Utenti...")) {
+                    // Logica futura:
+                    // state.AppState.showUserManagementPopup = true;
+                }
+                ImGui::EndMenu();
+            }
+        }
         ImGui::EndMenuBar();
     }
 
