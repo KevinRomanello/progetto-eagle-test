@@ -52,14 +52,16 @@ void RenderMainView() {
     // --- 2. Menu Bar ---
     if (ImGui::BeginMenuBar()) {
         // FILE
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Carica File...")) {
-                upload_file_controller::RequestOpenFile();
+        if (state.user.authenticated) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Carica File...")) {
+                    upload_file_controller::RequestOpenFile();
+                }
+                if (ImGui::MenuItem("Chiudi File")) {
+                    upload_file_controller::CloseFile();
+                }
+                ImGui::EndMenu();
             }
-            if (ImGui::MenuItem("Chiudi File")) {
-                upload_file_controller::CloseFile();
-            }
-            ImGui::EndMenu();
         }
 
         // menu visibile solo all'admin
