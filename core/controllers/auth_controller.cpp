@@ -92,5 +92,6 @@ void auth_controller::RequestLogout() {
     state.user.username = "";
     state.user.role = UserRole::USER; // resetta il ruolo al logout
     state.AppState.loadedFiles.clear();
+    state.AppState.selectedFileIndex = -1;
 }
 
