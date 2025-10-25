@@ -11,4 +11,3 @@ void app_render() {
     //ImPlot::ShowDemoWindow();
     RenderMainView();
 }
-
