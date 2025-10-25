@@ -1,4 +1,8 @@
 #include "add_user_view.h"
+
+#include <iostream>
+#include <ostream>
+
 #include "../core/data/global.h"
 #include "../controllers/user_management_controller.h"
 #include "imgui.h"
@@ -11,7 +15,7 @@ void RenderAddUserView() {
     }
 
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     if (ImGui::BeginPopupModal("Add New User", &state.AppState.showAddUserPopup, ImGuiWindowFlags_AlwaysAutoResize)) {
         static char username[64] = "";

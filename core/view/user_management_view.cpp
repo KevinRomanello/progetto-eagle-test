@@ -72,9 +72,9 @@ void RenderUserManagementView() {
         }
         ImGui::EndDisabled();
 
+        // Disegna il popup "Aggiungi" (così appare sopra)
+        RenderAddUserView();
+
         ImGui::EndPopup();
     }
-
-    // Disegna il popup "Aggiungi" (così appare sopra)
-    RenderAddUserView();
 }
