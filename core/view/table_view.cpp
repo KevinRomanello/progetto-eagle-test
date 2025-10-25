@@ -4,7 +4,6 @@
 
 // Questo è il codice che prima era 'static RenderDataTable'
 void RenderTableView(TelemetryData& currentFile) {
-    ImGui::Text("File: %s", currentFile.fileName.c_str());
     ImGui::Separator();
 
     int num_cols = currentFile.columnNames.size();

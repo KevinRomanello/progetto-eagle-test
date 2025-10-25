@@ -24,7 +24,6 @@ static float masterPlotHeight = 350.0f;
 static std::map<std::string, bool> seriesVisibility;
 
 void RenderPlotView(TelemetryData &currentFile) {
-    ImGui::Text("File: %s", currentFile.fileName.c_str());
     ImGui::Separator();
 
     std::vector<double> &x_data = currentFile.GetTimestamps();
