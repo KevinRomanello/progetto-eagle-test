@@ -4,7 +4,7 @@ Questo progetto è un'applicazione desktop multi-piattaforma, scritta in C++20, 
 
 L'interfaccia utente è costruita utilizzando **ImGui** per i widget e **ImPlot** per la generazione di grafici interattivi. L'applicazione include un sistema di autenticazione basato su ruoli (Admin, Advanced, User) che controlla l'accesso alle varie funzionalità di visualizzazione e gestione.
 
-## 🚀 Architettura e Scelte Progettuali
+## Architettura e Scelte Progettuali
 
 L'architettura del progetto segue una rigorosa **Separazione delle Competenze (Separation of Concerns)**, ispirata al pattern **Model-View-Controller (MVC)**. Questo approccio garantisce che il codice sia modulare, facile da manutenere e scalabile.
 
@@ -62,7 +62,7 @@ Quando un utente clicca un pulsante nella **View** (es. `ImGui::Button("Aggiungi
 * **Perché?** La View non sa (e non deve sapere) *come* si aggiunge un utente, *come* si parsa un file CSV o *come* si valida una password. Questo compito spetta ai Controller, che manipolano il **Model**. La View si limiterà a reagire al cambiamento del Model nel frame successivo.
 * **Esempio:** `upload_file_controller.cpp` contiene la logica per chiamare il parser (`csv_parser.cpp`), creare un oggetto `TelemetryData` e inserirlo nel vettore `loadedFiles` dello stato globale.
 
-## 📁 Struttura del Progetto
+##  Struttura del Progetto
 
 ```
 .
@@ -104,7 +104,8 @@ Quando un utente clicca un pulsante nella **View** (es. `ImGui::Button("Aggiungi
 │   ├── acceleration.csv
 │   └── skidpad.csv
 │
-├── readme.md                 # Questo file
+├── readme.md               # File della consegna
+├── info.md                 # Questo file
 │
 └── thirdparty/               # Librerie esterne (non modificate)
     ├── ImGuiFileDialog/      # Helper per la finestra di dialogo "Apri File"
@@ -112,9 +113,80 @@ Quando un utente clicca un pulsante nella **View** (es. `ImGui::Button("Aggiungi
     └── implot/               # Libreria ImPlot (grafici)
 ```
 
-## 🛠️ Dipendenze Principali
+##  Dipendenze Principali
 
 * **[Dear ImGui](https://github.com/ocornut/imgui)**: Per l'intera interfaccia grafica.
 * **[ImPlot](https://github.com/epezent/implot)**: Per i grafici 2D.
 * **[ImGuiFileDialog](https://github.com/aiekick/ImGuiFileDialog)**: Per la finestra di dialogo nativa "Apri File".
 * **GLFW** & **OpenGL**: Per la creazione della finestra e il rendering (gestiti tramite i *backends* di ImGui).
+---
+
+## Struttura Dati Principale (Il Model)
+
+Il Model è composto da poche strutture dati chiave che definiscono l'intero stato dell'applicazione.
+
+### `core/data/global.h`
+
+Questa è l'implementazione del **Singleton**. Definisce le macro-aree dello stato:
+
+* `AppState AppState`: Una struct che contiene tutti i **flag della UI** (es. `showLoginPopup`, `showUserManagementPopup`). Serve alla View per sapere quali finestre mostrare.
+* `currentUser`: Una struct che memorizza i dati dell'**utente attualmente loggato** (username, ruolo, e il flag `authenticated`).
+* `userDatabase`: Un `std::vector<UserData>` che agisce come "database" in memoria di tutti gli utenti registrati.
+* `loadedFiles`: Un `std::vector<TelemetryData>` che contiene tutti i file CSV parsati e pronti per essere visualizzati.
+
+### `core/model/telemetry_data.h`
+
+Questa classe è il cuore dei dati telemetrici.
+
+* `class DataColumn`: Una struct interna che memorizza i dati di una singola colonna del CSV (es. "throttle").
+    * **Perché `min` e `max`?** Memorizziamo il valore minimo e massimo di ogni colonna *al momento del parsing*. Questo è fondamentale per una scelta progettuale: il **Master Plot** richiede la **normalizzazione** dei dati (adattare tutti i valori a un range 0.0-1.0). Calcolare min/max una sola volta all'inizio ci evita di ricalcolarli a ogni singolo frame, garantendo performance elevate.
+* `class TelemetryData`: Rappresenta un intero file CSV.
+    * Contiene `fileName`, `columnNames` (l'intestazione) e una mappa (`std::map`) che associa il nome di una colonna (`std::string`) al suo oggetto `DataColumn`.
+    * **Perché una mappa?** Permette un accesso semantico e immediato ai dati (es. `currentFile.GetColumn("speed")`) invece di usare indici numerici (es. `currentFile.columns[3]`), rendendo il codice più leggibile. Questo porta ad un problema (facilmente risolvibile) ovvero che se ci sono 2 o più colonne con lo stesso nome verranno sovra scritte dall'ultima (assumo per il momento che cò non possa accadere). 
+
+### `core/data/user.h`
+
+Definisce la logica di autenticazione.
+
+* `enum UserRole`: Definisce i tre livelli di accesso: `USER`, `ADVANCED`, `ADMIN`.
+* `struct UserData`: Rappresenta un singolo utente nel `userDatabase`. Contiene `username`, `password` e il suo `UserRole`.
+
+---
+
+## Ruoli Utente e Permessi
+
+Il sistema di ruoli è progettato per fornire diversi livelli di accesso ai dati e alle funzionalità di amministrazione.
+
+### 1. `USER` (Utente Base)
+
+* **Scopo:** Visualizzazione di base.
+* **Permessi:**
+    * Può caricare file CSV.
+    * Può visualizzare i dati solo tramite **Plot Individuali** (un grafico separato per ogni colonna: velocità, acceleratore, ecc.).
+    * Non può vedere il "Master Plot".
+    * Non può accedere al menu "Admin".
+
+### 2. `ADVANCED` (Utente Avanzato)
+
+* **Scopo:** Analisi dati avanzata.
+* **Permessi:**
+    * Tutti i permessi dell'utente `USER`.
+    * Può visualizzare il **Master Plot**, che sovrappone tutti i segnali normalizzati in un unico grafico per un confronto diretto.
+    * Non può accedere al menu "Admin".
+
+### 3. `ADMIN` (Amministratore)
+
+* **Scopo:** Piena funzionalità e gestione utenti.
+* **Permessi:**
+    * Tutti i permessi dell'utente `ADVANCED` (inclusi tutti i grafici).
+    * Ha accesso al menu **"Admin"**.
+    * Può aprire il popup **"Gestione Utenti"** per:
+        * Visualizzare la lista di tutti gli utenti (tranne altri Admin).
+        * Aggiungere nuovi utenti (`USER` o `ADVANCED`).
+        * Eliminare utenti esistenti.
+
+### Credenziali per accedere
+Gli utenti e le loro credenziali sono salvati in un file (core/data/userData.csv) vista l'assenza di un DB.
+* Tipo: admin, Username: admin, Password: 1234
+* Tipo: advanced, Username: advanced, Password: 1234
+* Tipo: user, Username: user, Password: 1234
