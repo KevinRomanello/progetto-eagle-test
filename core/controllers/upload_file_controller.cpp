@@ -24,7 +24,10 @@ void upload_file_controller::CloseFile() {
 
     // Resetta l'indice. Se c'erano file dopo, si "spostano"
     // quindi -1 è la scelta più sicura.
-    state.AppState.selectedFileIndex = -1;
+    if (state.AppState.loadedFiles.empty())
+        state.AppState.selectedFileIndex = -1;
+    else
+        state.AppState.selectedFileIndex = 0;
 }
 
 void upload_file_controller::LoadFile(const std::string& filePath) {
