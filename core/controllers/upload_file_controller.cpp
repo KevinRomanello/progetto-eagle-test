@@ -29,10 +29,17 @@ void upload_file_controller::CloseFile() {
 
 void upload_file_controller::LoadFile(const std::string& filePath) {
     auto& state = global::get();
-
     try {
         // 1. Tenta di parsare il file con il nuovo parser
         TelemetryData newFile = CSVParser::Parse(filePath);
+
+        // controlla che non sia già caricato, in caso return senza caricarlo.
+        for (int i = 0; i < state.AppState.loadedFiles.size(); i++) {
+            if (newFile.fileName == state.AppState.loadedFiles[i].fileName) {
+                std::cerr << "File già caricato" << std::endl;
+                return;
+            }
+        }
 
         // 2. Aggiungi l'oggetto TelemetryData al Model
         state.AppState.loadedFiles.push_back(newFile);
@@ -42,6 +49,5 @@ void upload_file_controller::LoadFile(const std::string& filePath) {
 
     } catch (const std::runtime_error& e) {
         std::cerr << "Errore caricamento file: " << e.what() << std::endl;
-        // TODO creare un popup per la visualizzazione degli errori
     }
 }
