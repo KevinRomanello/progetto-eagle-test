@@ -23,8 +23,10 @@ void RenderUploadFileView() {
         return;
     }
 
+    ImVec2 fixedDialogSize = ImVec2(800, 400);
+    ImGuiWindowFlags dialogFlags = ImGuiWindowFlags_NoResize;
 
-    if (ImGuiFileDialog::Instance()->Display("ChooseCSV")) {
+    if (ImGuiFileDialog::Instance()->Display("ChooseCSV", dialogFlags, fixedDialogSize)) {
 
         if (ImGuiFileDialog::Instance()->IsOk()) {
             std::string filePath = ImGuiFileDialog::Instance()->GetFilePathName();
