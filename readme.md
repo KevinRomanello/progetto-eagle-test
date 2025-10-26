@@ -1,6 +1,5 @@
+# Per info sul progetto sviluppato leggere il seguente file: [info.md](info.md)
 # Project 1
-> Per info sul progetto sviluppato leggere il seguente file: [info.md](info.md)
->
 > ⚠️ This document is fairly technical to maintain brevity, if you have **any** questions ask your recruiter or come visit us at floor -2 of Povo 2.
 
 ## Abstract
