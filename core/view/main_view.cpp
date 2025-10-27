@@ -49,6 +49,8 @@ void RenderMainView() {
 
     auto& state = global::get();
 
+    ImGui::PushFont(state.fonts.Default);
+
     // --- 2. Menu Bar ---
     if (ImGui::BeginMenuBar()) {
         // FILE
@@ -126,6 +128,8 @@ void RenderMainView() {
     RenderContentView();    // Delega il render alla view
 
     ImGui::EndChild();
+
+    ImGui::PopFont();
 
     ImGui::End();
 }

@@ -26,6 +26,7 @@ set(IMGUI_FILE_DIALOG_SRC
         core/view/add_user_view.cpp
         core/view/user_management_view.h
         core/view/user_management_view.cpp
+        core/data/Fonts.h
 )
 
 

@@ -3,6 +3,8 @@
 #include "implot/implot.h"
 #include "../core/data/global.h"
 
+ImFont* gFontDefault = nullptr;
+
 static const std::vector<ImVec4> plotColors = {
     ImVec4(0.0f, 0.7f, 1.0f, 1.0f), // Blu
     ImVec4(1.0f, 0.3f, 0.3f, 1.0f), // Rosso
@@ -34,13 +36,18 @@ void RenderPlotView(TelemetryData &currentFile) {
 
     const char *x_label = currentFile.columnNames[0].c_str();
 
-    auto &user = global::get().user;
+    auto &state = global::get();
+    auto &user = state.user;
 
     // 1. Disegna il Master Plot
     if (user.role == UserRole::ADVANCED || user.role == UserRole::ADMIN) {
         // --- LOOP 2: MASTER PLOT ---
 
-        if (ImPlot::BeginPlot("Master Plot", ImVec2(-1, masterPlotHeight))) {
+        ImGui::PushFont(state.fonts.TitoloGrande);
+
+        if (ImPlot::BeginPlot("MASTER PLOT", ImVec2(-1, masterPlotHeight))) {
+
+            ImGui::PushFont(state.fonts.Default);
             // Imposta l'asse Y per essere bloccato tra 0 e 1 (range normalizzato)
             ImPlot::SetupAxes(x_label, "Normalized Value", ImPlotAxisFlags_None,
                               ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
@@ -78,8 +85,11 @@ void RenderPlotView(TelemetryData &currentFile) {
 
                 ImPlot::PopStyleColor();
             }
+            ImGui::PopFont();
             ImPlot::EndPlot();
         }
+
+        ImGui::PopFont();
 
         // 1. Usiamo un ID stringa univoco per garantire che il bottone sia isolato
         // e tracciato correttamente da ImGui.
@@ -122,7 +132,12 @@ void RenderPlotView(TelemetryData &currentFile) {
         // Recupera un *riferimento* all'altezza di questo grafico
         float &currentHeight = plotHeights[colName];
 
+        ImGui::PushFont(state.fonts.TitoloGrande);
+
         if (ImPlot::BeginPlot(colName.c_str(), ImVec2(-1, currentHeight))) {
+
+            ImGui::PushFont(state.fonts.Default);
+
             ImPlot::SetupAxes(x_label, colName.c_str());
 
             // facciamo il i mod size(enum) sostanzialmente per continuare a usare in loop i colori
@@ -134,8 +149,12 @@ void RenderPlotView(TelemetryData &currentFile) {
 
             ImPlot::PopStyleColor(); // rimuove il colore per non sporcare i grafici successivi
 
+            ImGui::PopFont();
+
             ImPlot::EndPlot();
         }
+
+        ImGui::PopFont();
 
         // --- SPLITTER ORIZZONTALE ---
         // Usiamo l'indice 'i' per il PushID.

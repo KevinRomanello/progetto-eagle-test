@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "data/global.h"
 #include "../core/controllers/auth_controller.h" // per il caricamento degli utenti
 
 #include "app.h"
@@ -35,9 +36,16 @@ int main() {
   std::cout << "Opening Window" << std::endl;
   window = open_window();
   init_imgui(window);
+
+  ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
   ImVec4 clear_color = ImVec4(0.06f, 0.06f, 0.06f, 0.94f);
   std::cout << "Done" << std::endl;
+
+  // --- CARICA I FONT QUI ---
+  global::get().fonts.Default = io.Fonts->AddFontFromFileTTF("../thirdparty/arial/ARIAL.TTF", 18.0f);
+  global::get().fonts.TitoloGrande = io.Fonts->AddFontFromFileTTF("../thirdparty/arial/ARIAL.TTF", 24.0f);
+  // --- FINE CARICAMENTO FONT ---
 
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
