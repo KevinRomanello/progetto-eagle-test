@@ -34,7 +34,79 @@ void RenderPlotView(TelemetryData &currentFile) {
 
     const char *x_label = currentFile.columnNames[0].c_str();
 
-    // --- LOOP 1: PLOT INDIVIDUALI ---
+    auto &user = global::get().user;
+
+    // 1. Disegna il Master Plot
+    if (user.role == UserRole::ADVANCED || user.role == UserRole::ADMIN) {
+        // --- LOOP 2: MASTER PLOT ---
+
+        if (ImPlot::BeginPlot("Master Plot", ImVec2(-1, masterPlotHeight))) {
+            // Imposta l'asse Y per essere bloccato tra 0 e 1 (range normalizzato)
+            ImPlot::SetupAxes(x_label, "Normalized Value", ImPlotAxisFlags_None,
+                              ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
+            ImPlot::SetupAxisLimits(ImAxis_Y1, -0.1, 1.1, ImGuiCond_Always);
+
+            // Vettore temporaneo per i dati normalizzati
+            std::vector<double> normalized_data;
+
+            for (int i = 1; i < currentFile.columnNames.size(); ++i) {
+                const std::string &colName = currentFile.columnNames[i];
+
+                DataColumn &column = currentFile.GetColumn(colName);
+                double min = column.min;
+                double max = column.max;
+                double range = max - min;
+
+                // Evita divisione per zero se tutti i valori sono uguali
+                if (range == 0) range = 1.0;
+
+                // 4. Calcola i dati normalizzati al volo
+                normalized_data.clear();
+                normalized_data.reserve(column.values.size());
+
+                for (double val: column.values) {
+                    // Formula di normalizzazione Min-Max
+                    normalized_data.push_back((val - min) / range);
+                }
+
+                // 5. Applica colore e plotta
+                int colorIndex = (i - 1) % plotColors.size();
+                ImPlot::PushStyleColor(ImPlotCol_Line, plotColors[colorIndex]);
+
+                // ImPlot::PlotLine(colName.c_str(), ...) aggiungerà automaticamente la serie
+                ImPlot::PlotLine(colName.c_str(), x_data.data(), normalized_data.data(), x_data.size());
+
+                ImPlot::PopStyleColor();
+            }
+            ImPlot::EndPlot();
+        }
+
+        // 1. Usiamo un ID stringa univoco per garantire che il bottone sia isolato
+        // e tracciato correttamente da ImGui.
+        ImGui::PushID("MasterPlotSplitter");
+
+        // 2. Il bottone invisibile deve avere la stessa larghezza del plot
+        // e un'altezza di circa 5 pixel.
+        ImGui::InvisibleButton("##splitter", ImVec2(-1, 5.0f));
+
+        // 3. Controlliamo se ci stiamo interagendo
+        if (ImGui::IsItemHovered())
+            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+
+        // 4. L'errore è spesso qui: dobbiamo usare IsItemActive() per catturare il drag
+        if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+            // Aggiorniamo l'altezza del Master Plot
+            masterPlotHeight += ImGui::GetIO().MouseDelta.y;
+
+            // Applichiamo il limite minimo
+            if (masterPlotHeight < minPlotHeight)
+                masterPlotHeight = minPlotHeight;
+        }
+
+        ImGui::PopID(); // Rilasciamo l'ID
+    }
+
+    // --- LOOP 2: PLOT INDIVIDUALI ---
     for (int i = 1; i < currentFile.columnNames.size(); ++i) {
         const std::string &colName = currentFile.columnNames[i];
         std::vector<double> &y_data = currentFile.GetColumnData(colName);
@@ -83,79 +155,6 @@ void RenderPlotView(TelemetryData &currentFile) {
             // Applichiamo un limite minimo
             if (currentHeight < minPlotHeight)
                 currentHeight = minPlotHeight;
-        }
-
-        ImGui::PopID(); // Rilasciamo l'ID
-    }
-
-    auto &user = global::get().user;
-
-    // 2. Disegna il Master Plot
-    if (user.role == UserRole::ADVANCED || user.role == UserRole::ADMIN) {
-        // --- LOOP 2: MASTER PLOT ---
-
-        if (ImPlot::BeginPlot("Master Plot", ImVec2(-1, masterPlotHeight))) {
-            // Imposta l'asse Y per essere bloccato tra 0 e 1 (range normalizzato)
-            ImPlot::SetupAxes(x_label, "Normalized Value", ImPlotAxisFlags_None,
-                              ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
-            ImPlot::SetupAxisLimits(ImAxis_Y1, -0.1, 1.1, ImGuiCond_Always);
-
-            // Vettore temporaneo per i dati normalizzati
-            std::vector<double> normalized_data;
-
-            for (int i = 1; i < currentFile.columnNames.size(); ++i) {
-                const std::string &colName = currentFile.columnNames[i];
-
-                DataColumn &column = currentFile.GetColumn(colName);
-                double min = column.min;
-                double max = column.max;
-                double range = max - min;
-
-                // Evita divisione per zero se tutti i valori sono uguali
-                if (range == 0) range = 1.0;
-
-                // 4. Calcola i dati normalizzati al volo
-                normalized_data.clear();
-                normalized_data.reserve(column.values.size());
-
-                for (double val: column.values) {
-                    // Formula di normalizzazione Min-Max
-                    normalized_data.push_back((val - min) / range);
-                }
-
-                // 5. Applica colore e plotta
-                int colorIndex = (i - 1) % plotColors.size();
-                ImPlot::PushStyleColor(ImPlotCol_Line, plotColors[colorIndex]);
-
-                // ImPlot::PlotLine(colName.c_str(), ...) aggiungerà automaticamente la serie
-                ImPlot::PlotLine(colName.c_str(), x_data.data(), normalized_data.data(), x_data.size());
-
-                ImPlot::PopStyleColor();
-            }
-            ImPlot::EndPlot();
-        }
-        // --- NUOVO SPLITTER PER IL MASTER PLOT ---
-
-        // 1. Usiamo un ID stringa univoco per garantire che il bottone sia isolato
-        // e tracciato correttamente da ImGui.
-        ImGui::PushID("MasterPlotSplitter");
-
-        // 2. Il bottone invisibile deve avere la stessa larghezza del plot
-        // e un'altezza di circa 5 pixel.
-        ImGui::InvisibleButton("##splitter", ImVec2(-1, 5.0f));
-
-        // 3. Controlliamo se ci stiamo interagendo
-        if (ImGui::IsItemHovered())
-            ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
-
-        // 4. L'errore è spesso qui: dobbiamo usare IsItemActive() per catturare il drag
-        if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-            // Aggiorniamo l'altezza del Master Plot
-            masterPlotHeight += ImGui::GetIO().MouseDelta.y;
-
-            // Applichiamo il limite minimo
-            if (masterPlotHeight < minPlotHeight)
-                masterPlotHeight = minPlotHeight;
         }
 
         ImGui::PopID(); // Rilasciamo l'ID
