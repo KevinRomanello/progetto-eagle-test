@@ -6,7 +6,7 @@
 void RenderFileListView() {
     auto& state = global::get();
 
-    ImGui::Text("File Caricati:");
+    ImGui::Text("Loaded Files:");
     ImGui::Separator();
 
     // Itera sui file caricati nel Model

@@ -75,15 +75,19 @@ void RenderMainView() {
         }
 
         // PROFILE
-        if (ImGui::BeginMenu("Profile")) {
-            if (!state.user.authenticated && ImGui::MenuItem("Login")) {
-                auth_controller::RequestLogin();
-            }
-            if (state.user.authenticated && ImGui::MenuItem("Logout")) {
+        if (state.user.authenticated) {
+            if (ImGui::BeginMenu("Logout")) {
                 auth_controller::RequestLogout();
+                ImGui::EndMenu();
             }
-            ImGui::EndMenu();
+        }else {
+            if (ImGui::BeginMenu("Login")) {
+                auth_controller::RequestLogin();
+                ImGui::EndMenu();
+            }
         }
+
+
         ImGui::EndMenuBar();
     }
 

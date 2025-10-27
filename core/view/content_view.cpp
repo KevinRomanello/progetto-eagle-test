@@ -37,8 +37,8 @@ void RenderContentView() {
 
     } else {
         // Nessun file selezionato
-        ImGui::Text("Nessun file selezionato.");
-        ImGui::Text("Esegui l'accesso dal menu 'Profile > Login...'");
-        ImGui::Text("Carica un file dal menu 'File > Carica File...'");
+        ImGui::Text("No file selected.");
+        ImGui::Text("Log in from the menu 'Login...'");
+        ImGui::Text("Load a file from the menu 'File > Load File...'");
     }
 }
