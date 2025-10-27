@@ -78,14 +78,12 @@ void RenderMainView() {
 
         // PROFILE
         if (state.user.authenticated) {
-            if (ImGui::BeginMenu("Logout")) {
+            if (ImGui::MenuItem("Logout")) {
                 auth_controller::RequestLogout();
-                ImGui::EndMenu();
             }
         }else {
-            if (ImGui::BeginMenu("Login")) {
+            if (ImGui::MenuItem("Login")) {
                 auth_controller::RequestLogin();
-                ImGui::EndMenu();
             }
         }
 
