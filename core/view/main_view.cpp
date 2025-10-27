@@ -54,10 +54,10 @@ void RenderMainView() {
         // FILE
         if (state.user.authenticated) {
             if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Carica File...")) {
+                if (ImGui::MenuItem("Load File...")) {
                     upload_file_controller::RequestOpenFile();
                 }
-                if (ImGui::MenuItem("Chiudi File")) {
+                if (ImGui::MenuItem("Load File")) {
                     upload_file_controller::CloseFile();
                 }
                 ImGui::EndMenu();
@@ -67,7 +67,7 @@ void RenderMainView() {
         // menu visibile solo all'admin
         if (state.user.role == UserRole::ADMIN) {
             if (ImGui::BeginMenu("Users")) {
-                if (ImGui::MenuItem("Gestione Utenti...")) {
+                if (ImGui::MenuItem("Manage Users...")) {
                     user_management_controller::RequestShowPopup();
                 }
                 ImGui::EndMenu();
