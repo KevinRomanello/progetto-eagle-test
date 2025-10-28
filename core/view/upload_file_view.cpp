@@ -10,7 +10,7 @@ void RenderUploadFileView() {
     if (state.AppState.showUploadDialog) {
         ImGuiFileDialog::Instance()->OpenDialog(
             "ChooseCSV",
-            "Scegli un file CSV",
+            "Choose CSV File",
             ".csv\0"
         );
         state.AppState.showUploadDialog = false;
