@@ -56,10 +56,10 @@ void RenderMainView() {
         // FILE
         if (state.user.authenticated) {
             if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Load File...")) {
+                if (ImGui::MenuItem("Load File")) {
                     upload_file_controller::RequestOpenFile();
                 }
-                if (ImGui::MenuItem("Load File")) {
+                if (ImGui::MenuItem("Close File")) {
                     upload_file_controller::CloseFile();
                 }
                 ImGui::EndMenu();
