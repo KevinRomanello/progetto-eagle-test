@@ -19,11 +19,8 @@ static std::map<std::string, float> plotHeights;
 static const float defaultPlotHeight = 250.0f; // Altezza di partenza
 static const float minPlotHeight = 100.0f; // Altezza minima
 
-// NUOVA VARIABILE STATICA PER L'ALTEZZA DEL MASTER PLOT
+// altezza default del master plot
 static float masterPlotHeight = 350.0f;
-
-// Mappa statica per memorizzare la visibilità delle serie nel Master Plot
-static std::map<std::string, bool> seriesVisibility;
 
 void RenderPlotView(TelemetryData &currentFile) {
     ImGui::Separator();
@@ -39,21 +36,21 @@ void RenderPlotView(TelemetryData &currentFile) {
     auto &state = global::get();
     auto &user = state.user;
 
-    // 1. Disegna il Master Plot
+    // disegna il Master Plot
     if (user.role == UserRole::ADVANCED || user.role == UserRole::ADMIN) {
-        // --- LOOP 2: MASTER PLOT ---
 
-        ImGui::PushFont(state.fonts.TitoloGrande);
+        ImGui::PushFont(state.fonts.TitoloGrande); // font per il titolo un po' più grande
 
         if (ImPlot::BeginPlot("MASTER PLOT", ImVec2(-1, masterPlotHeight))) {
 
             ImGui::PushFont(state.fonts.Default);
-            // Imposta l'asse Y per essere bloccato tra 0 e 1 (range normalizzato)
+
+            // Imposta l'asse Y per essere bloccato tra 0 e 1, quindi valori normalizzati
             ImPlot::SetupAxes(x_label, "Normalized Value", ImPlotAxisFlags_None,
                               ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -0.1, 1.1, ImGuiCond_Always);
 
-            // Vettore temporaneo per i dati normalizzati
+            // vettore temporaneo per i dati normalizzati
             std::vector<double> normalized_data;
 
             for (int i = 1; i < currentFile.columnNames.size(); ++i) {
@@ -67,20 +64,19 @@ void RenderPlotView(TelemetryData &currentFile) {
                 // Evita divisione per zero se tutti i valori sono uguali
                 if (range == 0) range = 1.0;
 
-                // 4. Calcola i dati normalizzati al volo
+                // Calcola i dati normalizzati al volo
                 normalized_data.clear();
                 normalized_data.reserve(column.values.size());
 
                 for (double val: column.values) {
-                    // Formula di normalizzazione Min-Max
+                    // formula per la normalizzazione
                     normalized_data.push_back((val - min) / range);
                 }
 
-                // 5. Applica colore e plotta
+                // ppplica il colore e plotta
                 int colorIndex = (i - 1) % plotColors.size();
                 ImPlot::PushStyleColor(ImPlotCol_Line, plotColors[colorIndex]);
 
-                // ImPlot::PlotLine(colName.c_str(), ...) aggiungerà automaticamente la serie
                 ImPlot::PlotLine(colName.c_str(), x_data.data(), normalized_data.data(), x_data.size());
 
                 ImPlot::PopStyleColor();
@@ -92,11 +88,9 @@ void RenderPlotView(TelemetryData &currentFile) {
         ImGui::PopFont();
 
         // 1. Usiamo un ID stringa univoco per garantire che il bottone sia isolato
-        // e tracciato correttamente da ImGui.
         ImGui::PushID("MasterPlotSplitter");
 
         // 2. Il bottone invisibile deve avere la stessa larghezza del plot
-        // e un'altezza di circa 5 pixel.
         ImGui::InvisibleButton("##splitter", ImVec2(-1, 5.0f));
 
         // 3. Controlliamo se ci stiamo interagendo
@@ -113,23 +107,22 @@ void RenderPlotView(TelemetryData &currentFile) {
                 masterPlotHeight = minPlotHeight;
         }
 
-        ImGui::PopID(); // Rilasciamo l'ID
+        ImGui::PopID();
     }
 
-    // --- LOOP 2: PLOT INDIVIDUALI ---
+    // plot individuali
     for (int i = 1; i < currentFile.columnNames.size(); ++i) {
         const std::string &colName = currentFile.columnNames[i];
         std::vector<double> &y_data = currentFile.GetColumnData(colName);
 
         if (y_data.size() != x_data.size()) continue;
 
-        // Se non abbiamo ancora un'altezza per questo grafico,
-        // inizializzala a quella di default.
+        // se non abbiamo miodificato l'altezzo usa quella di default
         if (plotHeights.find(colName) == plotHeights.end()) {
             plotHeights[colName] = defaultPlotHeight;
         }
 
-        // Recupera un *riferimento* all'altezza di questo grafico
+        // recupera l'altezza di questo grafico
         float &currentHeight = plotHeights[colName];
 
         ImGui::PushFont(state.fonts.TitoloGrande);
@@ -156,7 +149,7 @@ void RenderPlotView(TelemetryData &currentFile) {
 
         ImGui::PopFont();
 
-        // --- SPLITTER ORIZZONTALE ---
+        // splitter orizzontale
         // Usiamo l'indice 'i' per il PushID.
         ImGui::PushID(i);
 

@@ -3,7 +3,7 @@
 #include "../data/global.h"
 #include "../thirdparty/ImGuiFileDialog/ImGuiFileDialog.h"
 
-
+// utilizzo ImGuiFileDialog che è uan finestra per sciegliere i file già fatta
 void RenderUploadFileView() {
     auto& state = global::get();
 

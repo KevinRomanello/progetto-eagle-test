@@ -1,5 +1,5 @@
 #pragma once
-#include "imgui.h" // Include necessario per ImFont
+#include "imgui.h" 
 
 struct Fonts
 {

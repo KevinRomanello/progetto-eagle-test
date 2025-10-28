@@ -9,16 +9,13 @@ void RenderFileListView() {
     ImGui::Text("Loaded Files:");
     ImGui::Separator();
 
-    // Itera sui file caricati nel Model
+    // crea un selectable per ogni file sostanzialmente
     for (int i = 0; i < state.AppState.loadedFiles.size(); ++i) {
         
         const std::string& fileName = state.AppState.loadedFiles[i].fileName;
         bool isSelected = (state.AppState.selectedFileIndex == i);
 
-        // Disegna l'elemento
         if (ImGui::Selectable(fileName.c_str(), isSelected)) {
-            
-            // La View non modifica il Model, chiama il Controller
             file_list_controller::SelectFile(i);
         }
     }

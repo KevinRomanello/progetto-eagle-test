@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-// --- FUNZIONE DI SALVATAGGIO ---
+// riscrive il "file db"
 void user_management_controller::SaveUserDatabase() {
     auto& db = global::get().userDatabase;
     std::ofstream file(global::USER_DB_FILE); 
@@ -22,7 +22,7 @@ void user_management_controller::SaveUserDatabase() {
     std::cout << "Database utenti salvato." << std::endl;
 }
 
-// --- Funzioni di gestione popup ---
+// funzioni di gestione popup
 void user_management_controller::RequestShowPopup() {
     global::get().AppState.showUserManagementPopup = true;
     global::get().AppState.selectedUserIndexInDb = -1; 
@@ -37,11 +37,12 @@ void user_management_controller::RequestCloseAddUserPopup() {
     global::get().AppState.showAddUserPopup = false;
 }
 
-// --- Funzioni di Azione ---
+// selezione dell'utente
 void user_management_controller::SelectUser(int db_index) {
     global::get().AppState.selectedUserIndexInDb = db_index;
 }
 
+// eliminazione di un utente
 void user_management_controller::DeleteSelectedUser() {
     auto& state = global::get();
     int index = state.AppState.selectedUserIndexInDb;
@@ -55,9 +56,10 @@ void user_management_controller::DeleteSelectedUser() {
     state.userDatabase.erase(state.userDatabase.begin() + index);
     state.AppState.selectedUserIndexInDb = -1; 
 
-    SaveUserDatabase(); // Salva le modifiche
+    SaveUserDatabase();
 }
 
+// aggiunta di un utente
 bool user_management_controller::AddUser(const std::string& user, const std::string& pass, UserRole role) {
     if (user.empty() || pass.empty()) return false;
     
@@ -70,7 +72,7 @@ bool user_management_controller::AddUser(const std::string& user, const std::str
     }
 
     db.push_back(UserData{user, pass, role});
-    SaveUserDatabase(); // Salva le modifiche
+    SaveUserDatabase(); 
     RequestCloseAddUserPopup();
     return true;
 }

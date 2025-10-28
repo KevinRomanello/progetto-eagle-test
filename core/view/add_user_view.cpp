@@ -1,7 +1,6 @@
 #include "add_user_view.h"
 
 #include <iostream>
-#include <ostream>
 
 #include "../core/data/global.h"
 #include "../controllers/user_management_controller.h"
@@ -20,7 +19,7 @@ void RenderAddUserView() {
     if (ImGui::BeginPopupModal("Add New User", &state.AppState.showAddUserPopup, ImGuiWindowFlags_AlwaysAutoResize)) {
         static char username[64] = "";
         static char password[64] = "";
-        static int selectedRoleIndex = 0; // 0=USER, 1=ADVANCED
+        static int selectedRoleIndex = 0; // 0=USER, 1=ADVANCED, 2 = ADMIN
 
         const char* roles[] = { "USER", "ADVANCED" };
         

@@ -4,7 +4,7 @@
 #include "add_user_view.h"
 #include "imgui.h"
 #include <vector>
-#include <iostream> // Per il tuo cout
+#include <iostream>
 
 void RenderUserManagementView() {
     auto& state = global::get();
@@ -13,21 +13,16 @@ void RenderUserManagementView() {
         ImGui::OpenPopup("Manage Users");
     }
 
-    // --- QUESTA È LA SOLUZIONE ---
-    // Diciamo a ImGui di forzare questa posizione e dimensione
-    // AD OGNI FRAME (Always), ignorando il file .ini
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
     ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_Always);
 
-    // Flag per non salvare MAI PIÙ la posizione di questa finestra
+    // flag per non salvare la posizione ma farla centrare ogni volta
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoSavedSettings;
 
     if (ImGui::BeginPopupModal("Manage Users", &state.AppState.showUserManagementPopup, flags)) {
 
-        // --- Pannello Sinistro (ORA LA LISTA) ---
-        // Imposta la larghezza a 0 per farla auto-adattare, ma con uno splitter
-        // Mettiamo una larghezza fissa per la lista, es. 330
+        // lista di utenti
         ImGui::BeginChild("UserListPane", ImVec2(330, -40), true);
         ImGui::Text("Users (excluding Admin)");
         ImGui::Separator();
@@ -44,8 +39,7 @@ void RenderUserManagementView() {
 
         ImGui::SameLine();
 
-        // --- Pannello Destro (ORA I DETTAGLI) ---
-        // (Usa ImVec2(0, ...) per fargli prendere lo spazio rimanente)
+        // lista dei dettagli dell'utente
         ImGui::BeginChild("DetailsPane", ImVec2(0, -40), true);
         ImGui::Text("User Details");
         ImGui::Separator();
@@ -60,7 +54,7 @@ void RenderUserManagementView() {
         }
         ImGui::EndChild();
 
-        // Pulsanti in fondo
+        // pulsanti in fondo
         if (ImGui::Button("Add User...")) {
             user_management_controller::RequestShowAddUserPopup();
         }
@@ -72,7 +66,6 @@ void RenderUserManagementView() {
         }
         ImGui::EndDisabled();
 
-        // Disegna il popup "Aggiungi" (così appare sopra)
         RenderAddUserView();
 
         ImGui::EndPopup();

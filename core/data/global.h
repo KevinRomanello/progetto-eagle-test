@@ -15,7 +15,7 @@ public:
     // file db temporaneo (scelta brutta senza db)
     static const std::string USER_DB_FILE;
 
-    // L'elenco di tutti gli utenti registrati (caricato da file)
+    // L'elenco di tutti gli utenti registrati caricato dal file sopra 
     std::vector<UserData> userDatabase;
 
     static global& get();

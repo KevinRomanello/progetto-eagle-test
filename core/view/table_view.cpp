@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include <string>
 
-// Questo è il codice che prima era 'static RenderDataTable'
+
 void RenderTableView(TelemetryData& currentFile) {
     ImGui::Separator();
 
@@ -18,6 +18,7 @@ void RenderTableView(TelemetryData& currentFile) {
                             ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollX |
                             ImGuiTableFlags_ScrollY;
 
+    // renderizza i dati tipo excel
     if (ImGui::BeginTable("DataTable", num_cols, flags, ImVec2(-1, -1))) {
 
         for (const auto& colName : currentFile.columnNames) {
@@ -32,8 +33,6 @@ void RenderTableView(TelemetryData& currentFile) {
 
                 const std::string& colName = currentFile.columnNames[col_idx];
 
-                // --- CORREZIONE ---
-                // Dobbiamo accedere a .values
                 double value = currentFile.columns.at(colName).values[row];
 
                 ImGui::Text("%.4f", value);

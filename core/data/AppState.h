@@ -8,7 +8,7 @@ struct AppState {
     bool showUserManagementPopup = false;
     bool showAddUserPopup = false;
 
-    std::vector<TelemetryData> loadedFiles; // Usa la nostra nuova struct
+    std::vector<TelemetryData> loadedFiles;
     int selectedFileIndex = -1;
 
     // Indice dell'utente selezionato nel popup di gestione
