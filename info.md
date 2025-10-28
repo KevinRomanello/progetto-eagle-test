@@ -117,7 +117,7 @@ Quando un utente clicca un pulsante nella **View** (es. `ImGui::Button("Aggiungi
 
 * **[Dear ImGui](https://github.com/ocornut/imgui)**: Per l'intera interfaccia grafica.
 * **[ImPlot](https://github.com/epezent/implot)**: Per i grafici 2D.
-* **[ImGuiFileDialog](https://github.com/aiekick/ImGuiFileDialog)**: Per la finestra di dialogo nativa "Apri File".
+* **[ImGuiFileDialog](https://github.com/aiekick/ImGuiFileDialog)**: Per la finestra di dialogo nativa "Load File".
 * **GLFW** & **OpenGL**: Per la creazione della finestra e il rendering (gestiti tramite i *backends* di ImGui).
 ---
 
