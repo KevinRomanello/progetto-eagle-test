@@ -14,24 +14,21 @@
 #include "user_management_view.h"
 #include "content_view.h"
 
-// Variabile globale temporanea per tab attivo
-int currentTabIndex = 0;
-
 upload_file_controller uploadController;
 auth_controller authController;
 
+// valore della sidebar dove ci sono i file aperti
 float sidebarWidth = 300.0f;
 
 void RenderMainView() {
-    // 1. Ottieni il "viewport" principale (l'intera finestra dell'OS)
+
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-    // 2. Imposta la posizione e la dimensione della *prossima* finestra
-    //    per riempire l'area di lavoro del viewport.
+    // imposta dim e posizione della finestra
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
 
-    // 3. Imposta i flag per renderla una "root window" non interattiva
+    // flags della finestra
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_MenuBar;           // Vogliamo il menu bar
     window_flags |= ImGuiWindowFlags_NoResize;          // Niente ridimensionamento
@@ -41,8 +38,6 @@ void RenderMainView() {
     window_flags |= ImGuiWindowFlags_NoTitleBar;        // Rimuove la barra del titolo (opzionale)
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus; // Non venire avanti se cliccata
 
-    // 4. Inizia la finestra. Nota "Main View##Root".
-    //    Il "##Root" è un ID nascosto. Passiamo 'nullptr' per 'p_open'.
     ImGui::Begin("Main View##Root", nullptr, window_flags);
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,9 +46,9 @@ void RenderMainView() {
 
     ImGui::PushFont(state.fonts.Default);
 
-    // --- 2. Menu Bar ---
+    // menu bar
     if (ImGui::BeginMenuBar()) {
-        // FILE
+        // file
         if (state.user.authenticated) {
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("Load File")) {
@@ -76,7 +71,7 @@ void RenderMainView() {
             }
         }
 
-        // PROFILE
+        // login logout
         if (state.user.authenticated) {
             if (ImGui::MenuItem("Logout")) {
                 auth_controller::RequestLogout();
@@ -91,22 +86,22 @@ void RenderMainView() {
         ImGui::EndMenuBar();
     }
 
-    // --- 3. Rendering Popup (gestiscono da soli la visibilità) ---
+    // call alle funzioni per il rendering delle views
     RenderLoginView();
     RenderUploadFileView();
     RenderUserManagementView();
 
-    // --- 4. DEFINIZIONE AREA DI LAVORO ---
+    // prende la grandezza della finestra
     ImVec2 winSize = ImGui::GetContentRegionAvail();
 
-    // --- 5. Sidebar (Contenitore) ---
+    // costruzione della sidebar
     ImGui::BeginChild("Sidebar", ImVec2(sidebarWidth, winSize.y), true);
     RenderFileListView();
     ImGui::EndChild();
 
     ImGui::SameLine();
 
-    // --- 6. Splitter (La "barra per modificare") ---
+    // costruzione dello splitter delle 2 colonne della mainview
     ImGui::PushID("Splitter");
     ImGui::InvisibleButton("##splitter", ImVec2(5, winSize.y));
     if (ImGui::IsItemHovered())
@@ -120,10 +115,11 @@ void RenderMainView() {
 
     ImGui::SameLine();
 
-    // --- 7. Content Area (Contenitore) ---
+    // area per i dati dei file caricati
     ImGui::BeginChild("Content", ImVec2(0, winSize.y), true);
 
-    RenderContentView();    // Delega il render alla view
+    // chiama la funzione per renderizzare i dati
+    RenderContentView();
 
     ImGui::EndChild();
 

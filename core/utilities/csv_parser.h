@@ -5,6 +5,7 @@
 
 class CSVParser {
 public:
-    // Tenta di parsare un file CSV con intestazione
     static TelemetryData Parse(const std::string& filePath);
 };
+
+std::string GetFileNameFromPath(const std::string& filePath);

@@ -5,14 +5,12 @@
 #include <fstream>
 #include <sstream>
 
-#include "../data/global.h"
-
 void auth_controller::LoadUserDatabase() {
     auto& db = global::get().userDatabase;
     db.clear();
     std::ifstream file(global::USER_DB_FILE);
 
-    // CASO 1: Il file non esiste (primo avvio)
+    // CASO 1: Il file non esiste, primo avvio o cancellato
     if (!file.is_open()) {
         std::cout << "File '" << global::USER_DB_FILE << "' non trovato. Creazione..." << std::endl;
 
@@ -20,12 +18,12 @@ void auth_controller::LoadUserDatabase() {
         db.push_back(UserData{"advanced", "1234", UserRole::ADVANCED});
         db.push_back(UserData{"user", "1234", UserRole::USER});
 
-        // Salva subito il file di default
+        // salva il file di default
         user_management_controller::SaveUserDatabase();
         return;
     }
 
-    // CASO 2: Il file esiste, lo leggiamo
+    // CASO 2: Il file esiste e lo leggiamo
     std::cout << "Caricamento database utenti da '" << global::USER_DB_FILE << "'..." << std::endl;
     std::string line;
     while (std::getline(file, line)) {
@@ -43,7 +41,7 @@ void auth_controller::LoadUserDatabase() {
     }
     file.close();
 
-    // --- CONTROLLO DI SICUREZZA (La tua richiesta) ---
+    // controlliamo che esista almeno un admin sennò si rompe tutto
     bool adminFound = false;
     for (const auto& user : db) {
         if (user.role == UserRole::ADMIN) {
@@ -52,14 +50,12 @@ void auth_controller::LoadUserDatabase() {
         }
     }
 
-    // Se, dopo aver letto il file, non c'è nessun admin...
+    // se non c'è ne mettiamo uno di default
     if (!adminFound) {
         std::cout << "ATTENZIONE: Nessun admin trovato. Aggiunta admin di default." << std::endl;
 
-        // Aggiungi l'admin di default al database in memoria
         db.push_back(UserData{"admin", "1234", UserRole::ADMIN});
 
-        // Salva di nuovo il file, ora corretto
         user_management_controller::SaveUserDatabase();
     }
 }
@@ -72,10 +68,9 @@ void auth_controller::RequestLogin() {
 bool auth_controller::login(const std::string& username, const std::string& password) {
     auto& state = global::get();
 
-    // Cerca l'utente nel database in memoria
+    // cerca l'utente nel database in memoria
     for (const auto& user : state.userDatabase) {
         if (user.username == username && user.password == password) {
-            // Trovato! Scrive i dati sull'utente corrente
             state.user.username = user.username;
             state.user.role = user.role;
             state.user.authenticated = true;
@@ -90,7 +85,7 @@ void auth_controller::RequestLogout() {
     auto& state = global::get();
     state.user.authenticated = false;
     state.user.username = "";
-    state.user.role = UserRole::USER; // resetta il ruolo al logout
+    state.user.role = UserRole::USER; // resetta vari al logout
     state.AppState.loadedFiles.clear();
     state.AppState.selectedFileIndex = -1;
 }

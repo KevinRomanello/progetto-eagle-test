@@ -2,6 +2,7 @@
 #include "../data/global.h"
 #include "../utilities/csv_parser.h"
 #include <iostream>
+#include "../utilities/csv_parser.h"
 
 void upload_file_controller::RequestOpenFile() {
     auto& state = global::get();
@@ -16,14 +17,13 @@ void upload_file_controller::CloseFile() {
 
     int index = state.AppState.selectedFileIndex;
     if (index < 0 || index >= state.AppState.loadedFiles.size()) {
-        return; // Nessun file valido selezionato
+        return; // nessun file valido selezionato
     }
 
-    // Rimuovi il file dal vettore
+    // rimozione del file
     state.AppState.loadedFiles.erase(state.AppState.loadedFiles.begin() + index);
 
-    // Resetta l'indice. Se c'erano file dopo, si "spostano"
-    // quindi -1 è la scelta più sicura.
+    // se è vuoto mette a -1 sennò va al primo file
     if (state.AppState.loadedFiles.empty())
         state.AppState.selectedFileIndex = -1;
     else
@@ -33,21 +33,25 @@ void upload_file_controller::CloseFile() {
 void upload_file_controller::LoadFile(const std::string& filePath) {
     auto& state = global::get();
     try {
-        // 1. Tenta di parsare il file con il nuovo parser
-        TelemetryData newFile = CSVParser::Parse(filePath);
+
+        // prendo il nome del file
+        std::string nome = GetFileNameFromPath(filePath);
 
         // controlla che non sia già caricato, in caso return senza caricarlo.
         for (int i = 0; i < state.AppState.loadedFiles.size(); i++) {
-            if (newFile.fileName == state.AppState.loadedFiles[i].fileName) {
+            if ( nome == state.AppState.loadedFiles[i].fileName) {
                 std::cerr << "File già caricato" << std::endl;
                 return;
             }
         }
 
-        // 2. Aggiungi l'oggetto TelemetryData al Model
+        // tenta di parsare il file
+        TelemetryData newFile = CSVParser::Parse(filePath);
+
+        // aggiungo il file parsato alla lista
         state.AppState.loadedFiles.push_back(newFile);
 
-        // 3. Seleziona automaticamente il file appena caricato
+        // lo seleziono in modo da visualizzarlo
         state.AppState.selectedFileIndex = state.AppState.loadedFiles.size() - 1;
 
     } catch (const std::runtime_error& e) {
